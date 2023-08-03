@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %} 
+    <div class="container">
+        <div class="row ">
+            <div class="buttondiv">
+                <button type="button" class="btn" style="background-color: #F5BDC1; border-radius: 20px; ">
+                    <a href="{% url 'home:detail' %}">Get Start</a>
+                    </button>
+            </div>
+        </div>
+        
+        <div class="row mt-3">
+            <div class="card p-5" style="height:auto;background-color: #F5BDC1; border-radius: 20px;">
+                <div class="text mt-3" style="color: white;">
+                     <h1 class ="display-2 head" > <strong>Welcome yourPalette!</strong> 💄💋</h1> 
+
+                    <text class="display-6 font-weight-normal">Experience beauty made just for you with yourPalette. Simply upload a
+                        photo and discover a curated selection of foundation, brow and lip
+                        shades that perfectly match your undertone. Effortlessly elevate your
+                        makeup routine with personalized recommendations, exclusively tailored
+                        to your unique beauty needs. Join us today and unveil your perfect
+                        palette!&quot;</text>
+                    </div>
+            </div>
+        </div>
+
+        <div class="row mt-5 me-1 mx-auto">
+            <div class="card3 mx-auto p-3" style="height:auto; border-radius: 20px; background-color: #F5BDC1;">
+                <div class="text text-center display-4 float-center m-auto" style="color: white;  ">So How Does It Work? 🤔</div>
+            </div>
+        </div>
+
+        <div class="row mt-5 justify-content-around">
+                <div class="col-3 p-3" style="height:auto;background-color: #F5BDC1; border-radius: 20px;">
+                    <div class="h2 rigthside "><u> Step 1</u> </div>
+                    <text class="h4">
+                        Take a selfie! 🤳 Capture a stunning full-face selfie, ensuring your head is in frame
+                        and lit with white light to showcase your natural beauty.
+                    </text>
+                    <img src="{% static 'img1.jpg' %}" width=60% 
+                        height=50% class="rounded" style="display: block;">
+                        <p> Like this !</p>
+                </div>
+                <div class="col-3 p-3" style="height:auto;background-color: #F5BDC1; border-radius: 20px;">
+                    <text class="h4">
+                       OR, snap a picture of your wrist up close, with the flash on, for optimal clarity. 
+                    </text>
+                    <img src="{% static 'img2.jpg' %}" width=60% 
+                        height=50% class="rounded m-4" style="display: block;">
+                        <p> Like this !</p>
+                </div>
+            <div class="col-3 justify-content-around "style="height:auto;background-color: #F5BDC1; border-radius: 20px;">
+                <div class="mt-2" style="color: black; font-size: 30px"><p display-6><u>Step 2</u></p>
+                    <p>Upload your selfie/image of your wrist and we will start working on your palette! 🎨 
+                    </p></div>
+            </div> 
+        </div>
+
+        <div class="row mt-5 ">
+            <div class="card4 p-3" style="height:auto; border-radius: 50px; background-color: #F5BDC1;">
+                    <div class="text h2">
+                        <u>Step 3</u>
+                    </div>
+                    <text class="display-6">Voila! 🤩 
+                        Your own color palette awaits. It may look something like this...
+                    </text>
+                    <img src="{% static 'result.png' %}" width=60% 
+                    height=60% class="rounded m-4 float-center mx-auto" style="display: block; border-radius: 25px;">
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3 ms-5 ps-5">
+        <div class="buttondiv">
+            <button type="button" class="btn" style="background-color: #F5BDC1; border-radius: 20px; ">
+                <a href="{% url 'home:detail' %}">I am ready to find my palette 😎</a>
+                </button>
+        </div>
+    </div>
+    <div class="row mt-3 ms-5 ps-5">
+        
+    </div>
+    <div class="row mt-3 ms-5 ps-5">
+        
+    </div>
+    <div class="row mt-3 ms-5 ps-5">
+        
+    </div>
+    <div class="row mt-3 ms-5 ps-5">
+        
+    </div>
+
+
+
+      <!-- <video id="video" width="640" height="480" autoplay></video>
+      <button id="snap">Take Picture</button>
+      <canvas class="d-none" id="canvas" width="640" height="480"></canvas>
+      <div>
+        <form class="p-2" style="z-index: 1;" method="post" enctype="multipart/form-data" id="file_form">
+            {% csrf_token %}
+            <div class="input-group">
+                <input class="form-control" type="file" id="file" name="file" placeholder="Upload File" />
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-secondary" id="myBtn">Upload</button>
+                </div>
+            </div>
+        </form>
+    </div>
+      <div class="h1" id="showWords"> -->
+        <!-- <img src="{% static 'debug.jpg' %}"> -->
+      <!-- </div> -->
+      <!-- <div class="row" id="showImg"> -->
+        <!-- <img src="{% static 'debug.jpg' %}"> -->
+      <!-- </div> -->
+      
+{% endblock content %}
+
+
+
+
+
+
+	
+</body>
+</html>
+
+
+
+

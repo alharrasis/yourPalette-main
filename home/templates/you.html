@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %} 
+<style>
+    .dot {
+  height: 30px;
+  width: 30px;
+  background-color: "{{color}}";
+  border-radius: 50%;
+  display: inline-block;
+}
+</style>
+    <div class="container">
+        <div class="row mt-5 justify-content-sm-between">
+            <div class="col-3 me-2" style="height:auto;background-color: #F5BDC1; border-radius: 20px;">
+                <div class=" h3 text-center m-auto float-center my-auto " style="color: white;font-size: 40px">
+                    <text class="h3 tex-center mx-auto"> Take a picture of you!</text>
+                    <text class="h3 tex-center mx-auto"> Or if you perfer, upload a profile picture with good lighting</text>
+                    <text class="h3 tex-center mx-auto"> Or a close up picture of your wrist</text>
+                </div>
+                
+            </div>
+            <div class="col-8 "style="height:auto;background-color: #F5BDC1; border-radius: 20px;">
+                <video class="m-auto pt-3"id="video" style="height: 480px;width: 640px; border-radius: 20px;;" autoplay></video>
+                <button id="snap" class="mb-2 btn btn-primary">Take Picture</button>
+            </div>
+        </div>
+       
+        <canvas class="d-none" id="canvas" width="640px" height="480px"></canvas>
+
+        <div class="row m-auto pt-2">
+            <div class="card4 m-2" style="height:auto; border-radius: 20px; background-color: #F5BDC1;">
+                <form class="p-2" style="z-index: 1;" method="post" enctype="multipart/form-data" id="file_form">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <input class="form-control" type="file" id="file" name="file" placeholder="Upload File" />
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-secondary" id="myBtn">Upload</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="card4 " style="height:auto; border-radius: 50px; background-color: #F5BDC1;">
+                    <!-- <text class="h3 text-center float-center mx-auto "> Here is your results ! </text> -->
+                    <div class="row m-auto" id="showImg" style="border-radius: 50px;height: 50%;width: 50%;"></div>
+            </div>
+        </div>
+
+        <div class="row mt-5 justify-content-between">
+            <div class="col-6 col-sm-4 mt-5 me-5" style="height:auto;background-color: #F5BDC1; border-radius: 20px;"> 
+                <div class="text h1" style="color: white; font-size: 30px;">Your skinTone:
+                    <div class="h1" id="showWords"></div>
+                </div>
+                <div class="text h1" style="color: white; font-size: 30px;">Your foundation shade is:
+                    <div class="h1" id="showWords"></div>
+                    <span class="dot" style='background-color: ;'></span>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4 mt-5 me-5"style="height:auto;background-color: #F5BDC1; border-radius: 20px;">
+                <div class="text" style="color: white; font-size: 30px;width: auto;">
+                    Your recommended lipstick shades include : 
+                    <div class="h5" id="lipsticks"></div>
+                </div>
+                
+              <div class="w-100 d-none d-md-block"></div>
+              <div class="row mt-3 ms-5 ps-5">
+        
+              </div>
+              <div class="row mt-3 ms-5 ps-5">
+                  
+              </div>
+              <div class="row mt-3 ms-5 ps-5">
+                  
+              </div>
+              <div class="row mt-3 ms-5 ps-5">
+                  
+              </div>    <div class="row mt-3 ms-5 ps-5">
+        
+              </div>
+              <div class="row mt-3 ms-5 ps-5">
+                  
+              </div>
+              <div class="row mt-3 ms-5 ps-5">
+                  
+              </div>
+              <div class="row mt-3 ms-5 ps-5">
+                  
+              </div>
+            </div>
+
+    </div>
+
+{% endblock content %}
+
+{% block javascripts %}
+<script>
+    navigator.mediaDevices.getUserMedia({ video: true })
+    .then(function(stream) {
+        var video = document.getElementById("video");
+        video.srcObject = stream;
+        video.play();
+    })
+    .catch(function(err) {
+        console.log("Error: " + err);
+    });
+
+    // Take a snapshot when the "Snap Photo" button is clicked
+    document.getElementById("snap").addEventListener("click", function() {
+        var canvas = document.getElementById("canvas");
+        var context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0, 640, 480);
+        // Save the image to the computer
+        var link = document.createElement('a');
+        //link.download = 'statics/input.png';
+        link.href = canvas.toDataURL(link)
+        //link.src = 'path/to/image.png';
+        link.click();
+        // console.log(link.href)
+        newData = new FormData();
+        // newData.append("imgfile", input.files[0]);
+        newData.append("file", link.href);
+        newData.append("csrfmiddlewaretoken", "{{csrf_token}}");
+        const csrftoken = "{{csrf_token}}"
+
+        $.ajax({
+            type: 'POST',
+            url: 'upload/',
+            processData: false,
+            contentType: false,
+            mimeType: "multipart/form-data",
+            data: newData,
+            success: function (data) {
+                var result = JSON.parse(data)
+                console.log(result.foundation)
+                console.log(result.fileName)
+
+                // $("#showImg").html("<img src=\"{% static data.displayImg %}\" alt=\"img\">")
+                $("#showImg").html('')
+                "{% load static %}"
+                $("#showImg").html('<img src="'+"{% static 'userview.jpg' %}"+ '" />')
+                $("#showWords").text(result.foundation)
+                // $("#lipsticks").text(result.plts)
+
+                if (result.result == 0){
+                    $("#lipsticks").html(
+                        `
+                        <span class="dot" style='background-color: #FFC5DE ;'></span>
+                        <span class="dot" style='background-color: #F8A2AA ;'></span>
+                        <span class="dot" style='background-color: #E3237B ;'></span>
+                        <span class="dot" style='background-color: #A92D7B ;'></span>
+                        <span class="dot" style='background-color: #89112C ;'></span>
+                        <span class="dot" style='background-color: #6B0F34 ;'></span>
+                        `
+                    )
+                }
+                if (result.result == 1){
+                    $("#lipsticks").html(
+                        `
+                        <span class="dot" style='background-color: #FFC5DE ;'></span>
+                        <span class="dot" style='background-color: #F8A2AA ;'></span>
+                        <span class="dot" style='background-color: #E3237B ;'></span>
+                        <span class="dot" style='background-color: #A92D7B ;'></span>
+                        <span class="dot" style='background-color: #89112C ;'></span>
+                        <span class="dot" style='background-color: #6B0F34 ;'></span>
+                        
+                        
+                        <span class="dot" style='background-color: #FECBC8 ;'></span>
+                        <span class="dot" style='background-color: #FCA590 ;'></span>
+                        <span class="dot" style='background-color: #DE4C30 ;'></span>
+                        <span class="dot" style='background-color: #D62C1D ;'></span>
+                        <span class="dot" style='background-color: #A10314 ;'></span>
+                        <span class="dot" style='background-color: #8E131D ;'></span>
+                        `
+                    )
+                }
+                if (result.result == 2){
+                    $("#lipsticks").html(
+                        `
+                        <span class="dot" style='background-color: #FECBC8 ;'></span>
+                        <span class="dot" style='background-color: #FCA590 ;'></span>
+                        <span class="dot" style='background-color: #DE4C30 ;'></span>
+                        <span class="dot" style='background-color: #D62C1D ;'></span>
+                        <span class="dot" style='background-color: #A10314 ;'></span>
+                        <span class="dot" style='background-color: #8E131D ;'></span>
+                        `
+                    )
+                }
+                // $("#showImg").html(`'<img src="'+"{% static '${result.fileName}' %}"+ '" />'`)
+            },
+            error: function () {
+                alert("Error!");
+            }
+          })
+    });
+
+    $('#file_form').on('submit', function (e) {
+        e.preventDefault();
+
+        var input = document.getElementById('file');
+        if (!input) {
+          alert("Um, couldn't find the fileinput element.");
+        }
+        else if (!input.files) {
+          alert("This browser doesn't seem to support the `files` property of file inputs.");
+        }
+        else if (!input.files[0]) {
+          alert("Please select a file before clicking 'Upload'");               
+        }
+        else {
+
+          $("#myBtn").toggle();
+          $("#loadingBtn").show();
+          $('#file').prop("disabled", true)
+        // $('#formDiv').removeClass("position-absolute")
+
+          newData = new FormData();
+          newData.append("file", input.files[0]);
+          newData.append("csrfmiddlewaretoken", $('input[name=csrfmiddlewaretoken]').val());
+          $.ajax({
+              type: 'POST',
+              url: 'upload/',
+              processData: false,
+              contentType: false,
+              mimeType: "multipart/form-data",
+              data: newData,
+              success: function (data) {                
+                var result = JSON.parse(data)
+                console.log(result.foundation)
+                console.log(result.fileName)
+
+                // $("#showImg").html("<img src=\"{% static data.displayImg %}\" alt=\"img\">")
+                $("#showImg").html('')
+                "{% load static %}"
+                $("#showImg").html('<img src="'+"{% static 'userview.jpg' %}"+ '" />')
+                $("#showWords").text(result.foundation)
+                // $("#lipsticks").text(result.plts)
+
+                if (result.result == 0){
+                    $("#lipsticks").html(
+                        `
+                        <span class="dot" style='background-color: #FFC5DE ;'></span>
+                        <span class="dot" style='background-color: #F8A2AA ;'></span>
+                        <span class="dot" style='background-color: #E3237B ;'></span>
+                        <span class="dot" style='background-color: #A92D7B ;'></span>
+                        <span class="dot" style='background-color: #89112C ;'></span>
+                        <span class="dot" style='background-color: #6B0F34 ;'></span>
+                        `
+                    )
+                }
+                if (result.result == 1){
+                    $("#lipsticks").html(
+                        `
+                        <span class="dot" style='background-color: #FFC5DE ;'></span>
+                        <span class="dot" style='background-color: #F8A2AA ;'></span>
+                        <span class="dot" style='background-color: #E3237B ;'></span>
+                        <span class="dot" style='background-color: #A92D7B ;'></span>
+                        <span class="dot" style='background-color: #89112C ;'></span>
+                        <span class="dot" style='background-color: #6B0F34 ;'></span>
+                        
+                        
+                        <span class="dot" style='background-color: #FECBC8 ;'></span>
+                        <span class="dot" style='background-color: #FCA590 ;'></span>
+                        <span class="dot" style='background-color: #DE4C30 ;'></span>
+                        <span class="dot" style='background-color: #D62C1D ;'></span>
+                        <span class="dot" style='background-color: #A10314 ;'></span>
+                        <span class="dot" style='background-color: #8E131D ;'></span>
+                        `
+                    )
+                }
+                if (result.result == 2){
+                    $("#lipsticks").html(
+                        `
+                        <span class="dot" style='background-color: #FECBC8 ;'></span>
+                        <span class="dot" style='background-color: #FCA590 ;'></span>
+                        <span class="dot" style='background-color: #DE4C30 ;'></span>
+                        <span class="dot" style='background-color: #D62C1D ;'></span>
+                        <span class="dot" style='background-color: #A10314 ;'></span>
+                        <span class="dot" style='background-color: #8E131D ;'></span>
+                        `
+                    )
+                }
+
+                // $("#showImg").html(`'<img src="'+"{% static '${result.fileName}' %}"+ '" />'`)
+                
+                $("#myBtn").toggle();
+                $("#loadingBtn").hide()
+                $('#file').prop("disabled", false)
+              },
+              error: function (data) {
+                  alert("Error!"+data);
+                  $("#myBtn").toggle();
+                  $("#loadingBtn").hide()
+                  $('#file').prop("disabled", false)
+              }
+          })
+        }
+
+    })
+    
+
+</script>
+{% endblock javascripts %}
